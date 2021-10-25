@@ -1,12 +1,12 @@
 #include <bits/stdc++.h>
 using namespace std;
-string fileName = "E:\\$tmp\\$code\\a.in";
-string fileOutputName = "E:\\$tmp\\$code\\a.out";
+string fileName = "a.in";
+string fileOutputName = "a.out";
 int main() {
-	regex p0("#[\\s\\S]*?$|/\\*([\\s\\S]*?)\\*/");
-	regex p1("^\\s+");
-	regex p2("\\s+$");
-	regex p3("\\s{2,}");
+	regex p0("#[\\s\\S]*?\\n");
+	regex p1("/\\*[\\s\\S]*?\\*/");
+	regex p2("\\n\\s*\\n");
+	regex p3("[ \\t]{2,}");
 	ifstream fin(fileName);
 	ofstream fout(fileOutputName);
 	stringstream buffer;
