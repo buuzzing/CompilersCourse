@@ -1,0 +1,15 @@
+typedef ll=long
+main(int a; float b) : (
+long c = a * a
+double d=b+b+b
+static double e= b
+for (int i=10; i <= 212; i= i+1) :(
+abc
+if (i>=20) continue /* 25
+else switch(i):
+case 102: b = b*123
+break
+default: break
+)
+return e
+)

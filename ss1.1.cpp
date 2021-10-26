@@ -1,12 +1,14 @@
 #include <bits/stdc++.h>
 using namespace std;
-string fileName = "a.in";
-string fileOutputName = "a.out";
+
+string fileName = "ss1.1.in";
+string fileOutputName = "ss1.1.out";
+
 int main() {
-	regex p0("#[\\s\\S]*?\\n");
-	regex p1("/\\*[\\s\\S]*?\\*/");
-	regex p2("\\n\\s*\\n");
-	regex p3("[ \\t]{2,}");
+	regex p0(R"(#[\s\S]*?\n)");
+	regex p1(R"(/\*([\s\S]*?)\*/)");
+	regex p2(R"(\n\s+)");
+	regex p3(R"([[:blank:]]{2,})");
 	ifstream fin(fileName);
 	ofstream fout(fileOutputName);
 	stringstream buffer;

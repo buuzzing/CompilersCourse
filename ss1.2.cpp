@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
+// #define PRINT_HELP
 using namespace std;
-const string inputFileName = "E:\\$tmp\\$code\\a.out";
+
+const string inputFileName = "ss1.1.out";
 const string keyword[] = {
 	"main", "if", "then", "while", "do", "static",
 	"int", "double", "struct", "break", "else", "long",
@@ -12,21 +14,14 @@ const string op[] = {
 	"<", "<>", "<=", ">", ">=", "=",
 	";", "(", ")", "#"
 };
-const string help = "Output would be in this format:\n\n"
-					"> Line: LINENUM\n"
-					"ORIGINAL_LINE_DATA\n"
-					"-----------------------------\n"
-					"syn\t\ttoken\t\tsum\n\n"
-					"When and only when the word is a number, "
-					"the \"sum\" part would not be a '-'.\n"
-					"And when and only when the word is a number, "
-					"the \"token\" part would be a '-'.\n";
+
 int isKeyword(const string &t) {
 	if (t == "default") return 39;
 	for (int i = 0; i < 25; ++i)
 		if (keyword[i] == t) return i + 1;
 	return -1;
 }
+
 int isOp(const string &t) {
 	if (t == "#") return 0;
 	for (int i = 0; i < 12; ++i)
@@ -35,20 +30,25 @@ int isOp(const string &t) {
 		if (op[i] == t) return i + 29;
 	return -1;
 }
+
 bool isChar(char ch) {
 	return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
 }
+
 bool isNum(char ch) {
 	return isdigit(ch);
 }
+
 bool isBlack(char ch) {
 	return ch == ' ' || ch == '\t';
 }
+
 bool isOp(char ch) {
 	return ch == '+' || ch == '-' || ch == '*' || ch == '/' ||
 	ch == ':' || ch == '=' || ch == '<' || ch == '>' ||
 	ch == ';' || ch == '(' || ch == ')' || ch == '#';
 }
+
 void print(int state, const string &token, bool isN) {
 	unsigned l = token.length();
 	if (isN)
@@ -59,6 +59,7 @@ void print(int state, const string &token, bool isN) {
 			<< '-' << endl;
 	}
 }
+
 void work() {
     ifstream fin(inputFileName);
     string line;
@@ -112,8 +113,23 @@ void work() {
             << "' at Line: " << e.first << endl;
     fin.close();
 }
+
+#ifdef PRINT_HELP
+const string help = "Output would be in this format:\n\n"
+                    "> Line: LINENUM\n"
+                    "ORIGINAL_LINE_DATA\n"
+                    "-----------------------------\n"
+                    "syn\t\ttoken\t\tsum\n\n"
+                    "When and only when the word is a number, "
+                    "the \"sum\" part would not be a '-'.\n"
+                    "And when and only when the word is a number, "
+                    "the \"token\" part would be a '-'.\n";
+#endif
+
 int main(int argc, char* argv[]) {
-	cout << help << endl;
+#ifdef PRINT_HELP
+    cout << help << endl;
+#endif
 	work();
 	return 0;
 }
