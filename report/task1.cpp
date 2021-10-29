@@ -34,8 +34,8 @@ int main() {
     buffer << fin.rdbuf();
     string contents(buffer.str());
 
-    contents = regex_replace(contents, p0, "");
-    contents = regex_replace(contents, p1, "");
+    contents = regex_replace(contents, p0, "\n");
+    contents = regex_replace(contents, p1, "\n");
     contents = regex_replace(contents, p2, "\n");
     contents = regex_replace(contents, p3, " ");
 
