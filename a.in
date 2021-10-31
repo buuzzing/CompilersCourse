@@ -1,0 +1,16 @@
+main(int argc, char* argv): (
+    int a; b    // This is a notes
+    /* This is a 
+    multiline notes
+    int main continue 1234   567.0e-5
+    */
+    float c=1.3e-25; d=22e-6
+    double intmain=0
+    if (a >= b) return 0
+    for(int i = 1; i <= 100; i=i+1): (
+        c=c+1.1234567
+        if(d) break
+        continue
+    )
+    return (void)123456789
+)
