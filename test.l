@@ -56,7 +56,7 @@ OTHER       .
 
 %%
 {COMM}      {printf("COMM: %s\n", yytext);}
-{COMMM}     {printf("COMM: %s >\n", yytext);}
+{COMMM}     {printf("COMM: %s\n", yytext);}
 {INT_DEX}   {printf("< 26, %s >\n", yytext);}
 {INT_HEX}   {printf("< 26, %s >\n", yytext);}
 {INT_OCT}   {printf("< 26, %s >\n", yytext);}
