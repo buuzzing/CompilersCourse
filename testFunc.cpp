@@ -2,6 +2,7 @@
 
 void TEST_INIT() {
     // INIT();
+	cout << "beginSym: " << beginSym << endl;
     cout << "terSymbol: ";
 	for (const auto & ch : terSymbol)
 		cout << ch << ' ';
