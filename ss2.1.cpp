@@ -3,26 +3,28 @@
 using namespace std;
 
 struct grammarElement {
-	// 我们假定产生式的左部和右部由一个空格分格
+	// 我们假定产生式的左右两边由一个空格分格
 	// 右边由 '|' 分成若干部分
 	grammarElement(string f = ""): formula(f) {}
 	string formula;	// 产生式
 };
 
-vector<grammarElement> gramOldSet;	// 原始文法的产生式集
-set<char> terSymbol;				// 终结符号
-set<char> non_ter;					// 非终结符号
-set<char> allSymbol;				// 所有符号
-map<char, set<char>> firstSet;		// 各产生式右部的 FIRST 集
-map<char, int> firstSetSize;		// 各产生式右部 FIRST 集大小
+char beginSym;						//* 文法开始符号
+vector<grammarElement> gramOldSet;	//* 原始文法的产生式集
+set<char> terSymbol;				//* 终结符号
+set<char> non_ter;					//* 非终结符号
+set<char> allSymbol;				//* 所有符号
+map<char, set<char>> firstSet;		//* 各产生式右部的 FIRST 集
+map<char, int> firstSetSize;		//* 各产生式右部 FIRST 集大小
 // map<char, bool> ifGetFirstSet;		// 标记一个符号是否已经求过 FIRST 集
-map<char, set<char>> followSet;		// 各产生式左部的 FOLLOW 集
-map<char, int> followSetSize;		// 各产生式左部 FOLLOW 集大小
+map<char, set<char>> followSet;		//TODO 各产生式左部的 FOLLOW 集
+map<char, int> followSetSize;		//TODO 各产生式左部 FOLLOW 集大小
 // map<char, bool> ifGetFollowSet;		// 标记一个符号是否已经求过 FOLLOW 集
-vector<vector<int>> M;				// 分析表
+vector<vector<int>> M;				//TODO 分析表
 
 void INIT();				//* 已完成测试
 void getFirstSet(char);		//* 已完成测试
+void getFollowSet(char);	//TODO 尚未测试
 
 /***** TESTPART *****/
 
@@ -55,6 +57,7 @@ void INIT() {
 #endif
 	string tmp;
 	while(getline(cin, tmp)) {
+		if (beginSym == '\0') beginSym = tmp[0]; 
 		gramOldSet.emplace_back(grammarElement(tmp));
 		for (const auto & ch : tmp) {
 			if (ch == ' ' || ch == '|' || ch == '?') continue;
@@ -93,10 +96,10 @@ void getFirstSet(char x) {
 	if (terSymbol.find(x) != terSymbol.end())
 		return (void)firstSet[x].insert(x);
 	bool hasVoid = false;
-	for (const auto& item : gramOldSet)
+	for (const auto & item : gramOldSet)
 		if (item.formula[0] == x) {
 			cc = getFormula(item);
-			for (const auto& word : cc) {
+			for (const auto & word : cc) {
 				if (word[0] == '?') {
 					firstSet[x].insert(word[0]);	// X -> ? 是产生式
 					hasVoid = true;
@@ -125,4 +128,24 @@ void getFirstSet(char x) {
 			}
 		}
 	if (!hasVoid) firstSet[x].erase('?');
+}
+
+void getFollowSet(char x) {
+	vector<string> cc;
+	if (x == beginSym) followSet[x].insert('#');
+	for (const auto & item : gramOldSet) {
+		cc = getFormula(item);
+		for (const auto & word : cc) {
+			for (int i = 0; i < word.length() - 1; ++i) {
+				// 若 A -> xBy
+				if (non_ter.find(word[i]) != non_ter.end()
+					&& terSymbol.find(word[i + 1]) != terSymbol.end()) {
+					// 则把 First(y) 中的非 ? 符号加入 Follow(B)
+					for (const auto & tt : firstSet[word[i + 1]])
+						if (tt != '?') followSet[word[i]].insert(tt);
+				}
+			}
+
+		}
+	}
 }
