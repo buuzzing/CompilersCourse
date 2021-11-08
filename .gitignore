@@ -2,6 +2,9 @@
 *.exe
 *.class
 
+# 不上传测试文件
+test.cpp
+
 # 实验报告文件夹内不上传输入输出文件
 /report/*.in
 /report/*.out
