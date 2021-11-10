@@ -17,14 +17,14 @@ set<char> allSymbol;				//* 所有符号
 map<char, set<char>> firstSet;		//* 各产生式右部的 FIRST 集
 map<char, int> firstSetSize;		//* 各产生式右部 FIRST 集大小
 // map<char, bool> ifGetFirstSet;		// 标记一个符号是否已经求过 FIRST 集
-map<char, set<char>> followSet;		//TODO 各产生式左部的 FOLLOW 集
-map<char, int> followSetSize;		//TODO 各产生式左部 FOLLOW 集大小
+map<char, set<char>> followSet;		//* 各产生式左部的 FOLLOW 集
+map<char, int> followSetSize;		//* 各产生式左部 FOLLOW 集大小
 // map<char, bool> ifGetFollowSet;		// 标记一个符号是否已经求过 FOLLOW 集
 vector<vector<int>> M;				//TODO 分析表
 
 void INIT();				//* 已完成测试
 void getFirstSet(char);		//* 已完成测试
-void getFollowSet(char);	//TODO 尚未测试
+void getFollowSet(char);	//* 已完成测试
 
 /***** TESTPART *****/
 
@@ -44,7 +44,17 @@ int main() {
 		}
 		if (OK) break;
 	}
-	
+	while(true) {	// 计算 Follow 集
+		for (const auto & ch : non_ter)
+			getFollowSet(ch);
+		bool OK = true;
+		for (const auto & item : followSet) {
+			if (followSetSize[item.first] != item.second.size())
+				OK = false;
+			followSetSize[item.first] = item.second.size();
+		}
+		if (OK) break;
+	}
 	return 0;
 }
 
@@ -132,20 +142,31 @@ void getFirstSet(char x) {
 
 void getFollowSet(char x) {
 	vector<string> cc;
+	// 对于文法的开始符号 S,置 # 于 FOLLOW(S) 中
 	if (x == beginSym) followSet[x].insert('#');
 	for (const auto & item : gramOldSet) {
 		cc = getFormula(item);
 		for (const auto & word : cc) {
 			for (int i = 0; i < word.length() - 1; ++i) {
 				// 若 A -> xBy
-				if (non_ter.find(word[i]) != non_ter.end()
-					&& terSymbol.find(word[i + 1]) != terSymbol.end()) {
+				if (non_ter.find(word[i]) != non_ter.end()) {
 					// 则把 First(y) 中的非 ? 符号加入 Follow(B)
 					for (const auto & tt : firstSet[word[i + 1]])
 						if (tt != '?') followSet[word[i]].insert(tt);
 				}
 			}
-
+			if (item.formula[0] == x) {
+				for (int i = word.length() - 1; i >= 0; --i) {
+					// 若 A -> xB 是产生式
+					// 则把 FOLLOW(A) 加至 FOLLOW(B)
+					for (const auto & tt : followSet[x])
+						followSet[word[i]].insert(tt);
+					// 若 A -> xBy 是产生式且 y 可星号推出 ?
+					// 则把 FOLLOW(A) 加至 FOLLOW(B)
+					if (firstSet[word[i]].find('?') == firstSet[word[i]].end())
+						break;
+				}
+			}
 		}
 	}
 }
