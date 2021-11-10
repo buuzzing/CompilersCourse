@@ -34,7 +34,30 @@ void TEST_getFirstSet() {
 	}
 	// 删去可能被计算的 ? 集
 	firstSet.erase('?');
+	cout << "FIRST SET" << endl;
 	for (const auto & item : firstSet) {
+		cout << item.first << ":\t";
+		for (const auto & ch : item.second)
+			cout << ch << ' ';
+		cout << endl;
+	}
+}
+
+void TEST_getFollowSet() {
+	// 获取非终结符的 Follow 集
+	while(true) {	// 计算 Follow 集
+		for (const auto & ch : non_ter)
+			getFollowSet(ch);
+		bool OK = true;
+		for (const auto & item : followSet) {
+			if (followSetSize[item.first] != item.second.size())
+				OK = false;
+			followSetSize[item.first] = item.second.size();
+		}
+		if (OK) break;
+	}
+	cout << "FOLLOW SET" << endl;
+	for (const auto & item : followSet) {
 		cout << item.first << ":\t";
 		for (const auto & ch : item.second)
 			cout << ch << ' ';
