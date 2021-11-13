@@ -20,14 +20,21 @@ map<char, int> firstSetSize;		//* 各产生式右部 FIRST 集大小
 map<char, set<char>> followSet;		//* 各产生式左部的 FOLLOW 集
 map<char, int> followSetSize;		//* 各产生式左部 FOLLOW 集大小
 // map<char, bool> ifGetFollowSet;		// 标记一个符号是否已经求过 FOLLOW 集
-vector<vector<int>> M;				//TODO 分析表
+map<pair<char, char>, string> M;	//* 分析表
 
 void INIT();				//* 已完成测试
 void getFirstSet(char);		//* 已完成测试
 void getFollowSet(char);	//* 已完成测试
+void getM();				//! 部分测试
 
 /***** TESTPART *****/
-
+void TEST_getM() {
+	getM();
+	char n_ter = '\0';
+	for (const auto & item : M)
+		cout << "<" << item.first.first << ", " << item.first.second
+			<< "> " << item.second << endl;
+}
 /********************/
 
 
@@ -55,6 +62,7 @@ int main() {
 		}
 		if (OK) break;
 	}
+	TEST_getM();
 	return 0;
 }
 
@@ -167,6 +175,26 @@ void getFollowSet(char x) {
 						break;
 				}
 			}
+		}
+	}
+}
+
+void getM() {
+	for (const auto & n_ter : non_ter)
+		for (const auto & ter : terSymbol)
+			M[make_pair(n_ter, ter)] = "";
+	vector<string> cc;
+	char begin;
+	for (const auto & item : gramOldSet) {
+		cc = getFormula(item);
+		begin = item.formula[0];
+		for (const auto & word : cc) {
+			auto fs = firstSet[word[0]];
+			for (const auto & ch : fs)
+				M[make_pair(begin, ch)] = (begin + (" " + word));
+			if (word[0] == '?' || fs.find('?') != fs.end())
+				for (const auto & ch : followSet[begin])
+					M[make_pair(begin, ch)] = (begin + (" " + word));
 		}
 	}
 }
