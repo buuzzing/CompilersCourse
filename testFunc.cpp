@@ -64,11 +64,3 @@ void TEST_getFollowSet() {
 		cout << endl;
 	}
 }
-
-void TEST_getM() {
-	getM();
-	char n_ter = '\0';
-	for (const auto & item : M)
-		cout << "<" << item.first.first << ", " << item.first.second
-			<< "> " << item.second << endl;
-}
