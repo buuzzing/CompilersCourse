@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #define LOCAL
+#define ERROR cout << endl << "Error Sentence!"
 using namespace std;
 
 struct grammarElement {
@@ -9,6 +10,7 @@ struct grammarElement {
 	string formula;	// 产生式
 };
 
+int n;								// 产生式数量
 char beginSym;						//* 文法开始符号
 vector<grammarElement> gramOldSet;	//* 原始文法的产生式集
 set<char> terSymbol;				//* 终结符号
@@ -21,12 +23,19 @@ map<char, set<char>> followSet;		//* 各产生式左部的 FOLLOW 集
 map<char, int> followSetSize;		//* 各产生式左部 FOLLOW 集大小
 // map<char, bool> ifGetFollowSet;		// 标记一个符号是否已经求过 FOLLOW 集
 map<pair<char, char>, string> M;	//* 分析表
+string sentence;					// 表达式
 
 void INIT();				//* 已完成测试
 void getFirstSet(char);		//* 已完成测试
 void getFollowSet(char);	//* 已完成测试
 void getM();				//* 已完成测试
 void printM();				//* 已完成测试
+void work(string&);			//! 已完成，部分测试
+
+function<void()> printLine = []() -> void {
+	cout << endl;
+	for (int i = 0; i < 70; ++i) cout << '-';
+};
 
 /***** TESTPART *****/
 
@@ -59,6 +68,7 @@ int main() {
 	}
 	getM();
 	printM();
+	work(sentence);
 	return 0;
 }
 
@@ -70,7 +80,9 @@ void INIT() {
 	freopen("a.in" , "r", stdin);
 #endif
 	string tmp;
-	while(getline(cin, tmp)) {
+	cin >> n; getchar();
+	for (int i = 0; i < n; ++i) {
+		getline(cin, tmp);
 		if (beginSym == '\0') beginSym = tmp[0]; 
 		gramOldSet.emplace_back(grammarElement(tmp));
 		for (const auto & ch : tmp) {
@@ -80,6 +92,7 @@ void INIT() {
 			allSymbol.insert(ch);
 		}
 	}
+	cin >> sentence;
 	for (const auto & ch : allSymbol) {
 		firstSetSize[ch] = 0;
 		followSetSize[ch] = 0;
@@ -197,11 +210,7 @@ void getM() {
 
 // 输出预测分析表
 void printM() {
-	function<void(int)> printLine = [](int num) -> void {
-		cout << endl;
-		for (int i = 0; i < 70; ++i) cout << '-';
-	};
-	printLine(70);
+	printLine();
 	vector<char> t;
 	for (const auto & ter : terSymbol)
 		t.emplace_back(ter);
@@ -210,7 +219,7 @@ void printM() {
 	cout << "\n\t";
 	for (const auto & ter : t)
 		cout << ter << "\t\t\t";
-	printLine(70);
+	printLine();
 	char be = '\0';
 	int i, mx = t.size();
 	for (const auto & item : M) {
@@ -232,4 +241,65 @@ void printM() {
 	cout << endl;
 	for (int i = 0; i < 70; ++i) cout << '-';
 	cout << endl;
+}
+
+void work(string& sen) {
+	int step = 0;
+	vector<char> op;
+	string formu = "";
+	op.emplace_back('#');
+	op.emplace_back(beginSym);
+	sen = sen + '#';
+	function<void(int)> print = [&step, &op, &sen, &formu](int pos) -> void {
+		cout << step++ << "\t\t";
+		for (const auto & ch : op) cout << ch;
+		if (op.size() <= 3) cout << "\t\t\t\t";
+		else if (op.size() <= 7) cout << "\t\t\t";
+		else if (op.size() <= 11) cout << "\t\t";
+		else cout << "\t";
+		for (auto p = pos; p < sen.length(); ++p)
+			cout << sen[p];
+		int len = sen.length() - pos;
+		if (len <= 3) cout << "\t\t\t\t";
+		else if (len <= 7) cout << "\t\t\t";
+		else if (len <= 11) cout << "\t\t";
+		else cout << "\t";
+		cout << formu << endl;
+	};
+	int top = 0;
+	char a = sen[top], x;
+	bool flag = true;
+	print(top);
+	while (true) {
+		x = op.back(), op.pop_back();
+		if (terSymbol.find(x) != terSymbol.end()) {
+			if (x == a) {	// 匹配成功
+				a = sen[++top];
+				formu = "";
+			} else {
+				ERROR;
+				break;
+			}
+		} else if (x == '#') {
+			if (x == a) {	// 分析成功
+				flag = false;
+			} else {
+				ERROR;
+				break;
+			}
+		} else if (M[make_pair(x, a)] != "") {
+			auto word = M[make_pair(x, a)];
+			formu = word;
+			for (auto p = word.length() - 1; p > 2; --p)
+				if (word[p] != '?')
+					op.emplace_back(word[p]);
+		} else {
+			ERROR;
+			break;
+		}
+		if (!flag) break;
+		print(top);
+	}
+	if (!flag) 
+		cout << endl << "Succeed!" << endl;
 }
