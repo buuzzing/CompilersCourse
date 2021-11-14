@@ -25,16 +25,11 @@ map<pair<char, char>, string> M;	//* 分析表
 void INIT();				//* 已完成测试
 void getFirstSet(char);		//* 已完成测试
 void getFollowSet(char);	//* 已完成测试
-void getM();				//! 部分测试
+void getM();				//* 已完成测试
+void printM();				//* 已完成测试
 
 /***** TESTPART *****/
-void TEST_getM() {
-	getM();
-	char n_ter = '\0';
-	for (const auto & item : M)
-		cout << "<" << item.first.first << ", " << item.first.second
-			<< "> " << item.second << endl;
-}
+
 /********************/
 
 
@@ -62,7 +57,8 @@ int main() {
 		}
 		if (OK) break;
 	}
-	TEST_getM();
+	getM();
+	printM();
 	return 0;
 }
 
@@ -191,10 +187,49 @@ void getM() {
 		for (const auto & word : cc) {
 			auto fs = firstSet[word[0]];
 			for (const auto & ch : fs)
-				M[make_pair(begin, ch)] = (begin + (" " + word));
+				M[make_pair(begin, ch)] = (begin + ("->" + word));
 			if (word[0] == '?' || fs.find('?') != fs.end())
 				for (const auto & ch : followSet[begin])
-					M[make_pair(begin, ch)] = (begin + (" " + word));
+					M[make_pair(begin, ch)] = (begin + ("->" + word));
 		}
 	}
+}
+
+// 输出预测分析表
+void printM() {
+	function<void(int)> printLine = [](int num) -> void {
+		cout << endl;
+		for (int i = 0; i < 70; ++i) cout << '-';
+	};
+	printLine(70);
+	vector<char> t;
+	for (const auto & ter : terSymbol)
+		t.emplace_back(ter);
+	t.emplace_back('#');
+	sort(t.begin(), t.end());
+	cout << "\n\t";
+	for (const auto & ter : t)
+		cout << ter << "\t\t\t";
+	printLine(70);
+	char be = '\0';
+	int i, mx = t.size();
+	for (const auto & item : M) {
+		if (item.first.first != be) {
+			be = item.first.first;
+			i = 0;
+			cout << endl << be << "|\t";
+		}
+		while (t[i] != item.first.second) {
+			i = (i + 1) % mx;
+			cout << "\t\t\t";
+		}
+		cout << item.second;
+		if (item.second.length() <= 3) cout << "\t\t\t";
+		else if (item.second.length() <= 7) cout << "\t\t";
+		else cout << "\t";
+		++i;
+	}
+	cout << endl;
+	for (int i = 0; i < 70; ++i) cout << '-';
+	cout << endl;
 }
