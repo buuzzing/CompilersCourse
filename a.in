@@ -1,3 +1,7 @@
-S a|^|(T)
-T SA
-A ,SA|?
+5
+E TA
+A +TA|?
+T FB
+B *FB|?
+F (E)|i
+i*i+i
